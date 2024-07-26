@@ -1,0 +1,30 @@
+import java_cup.runtime.Symbol;
+import compilers.Numeric;
+import compilers.Product;
+import compilers.Sum;
+import interfaces.IStatement;
+
+parser code {:
+    public IStatement AST;
+
+  public void unrecovered_syntax_error(Symbol s) throws Exception {
+    throw new Exception("Error irrecuperable en (linea, columna): " + s.left + ", " + s.right);
+  }
+:}
+
+terminal String NUM, PLUS, MULT;
+non terminal ini;
+non terminal IStatement expr;
+
+
+precedence left PLUS;
+precedence left MULT;
+
+start with ini;
+
+ini ::= expr:e {: parser.AST = e; :};
+
+expr ::= expr:a PLUS expr:b {: RESULT = new Sum(a,b); :}
+       | expr:l MULT expr:r {: RESULT = new Product(l,r); :}
+       | NUM:n {: RESULT = new Numeric(Integer.parseInt(n)); :}
+       ;
