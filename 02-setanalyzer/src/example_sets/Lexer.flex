@@ -21,6 +21,9 @@ import java_cup.runtime.Symbol;
 "CONJ"             { return new Symbol(sym.CONJ, yyline, (int) yychar, yytext()); }
 "OPERATION"        { return new Symbol(sym.OPERATION, yyline, (int) yychar, yytext()); }
 "U"                { return new Symbol(sym.UNION, yyline, (int) yychar, yytext()); }
+"&"                { return new Symbol(sym.INTERSEC, yyline, (int) yychar, yytext()); }
+"-"                { return new Symbol(sym.DIFF, yyline, (int) yychar, yytext()); }
+"^"                { return new Symbol(sym.COMPLEMENT, yyline, (int) yychar, yytext()); }
 [0-9]              { return new Symbol(sym.NUMBER, yyline, (int) yychar, yytext()); }
 [0-9A-Za-z_]+      { return new Symbol(sym.VAR, yyline, (int) yychar, yytext()); }
 "{"              { return new Symbol(sym.LBRACE, yyline, (int) yychar, yytext()); }

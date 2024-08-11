@@ -24,13 +24,9 @@ public class Example_sets {
         String input1 = """
                         CONJ conja : {1,2,3}
                         CONJ datab : {4,5,6}
-                        CONJ setc : {3}
+                        CONJ setc : {4, 3}
                         CONJ conjU : {9}
-                        OPERATION (conja U datab)
-                        
-                        OPERATION (conjU U setc)
-                        
-                        
+                        OPERATION (  ^ & datab setc)
                         """;
 
         Lexer scanner = new Lexer(new StringReader(input1));

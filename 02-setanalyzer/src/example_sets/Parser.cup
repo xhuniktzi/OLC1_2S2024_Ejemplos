@@ -9,6 +9,9 @@ import example_sets.operations.SetDefine;
 import example_sets.operations.SetOperation;
 import example_sets.operations.SetReference;
 import example_sets.operations.Union;
+import example_sets.operations.Difference;
+import example_sets.operations.Intersection;
+import example_sets.operations.Complement;
 
 parser code {:
     public LinkedList<IStatement> AST;
@@ -22,7 +25,7 @@ parser code {:
     }
 :}
 
-terminal String CONJ, UNION;
+terminal String CONJ, UNION, INTERSEC, DIFF, COMPLEMENT;
 terminal String VAR;
 terminal String NUMBER;
 terminal String OPERATION;
@@ -36,8 +39,6 @@ non terminal Set<Integer> conjunto_elements;
 non terminal SetReference conjunto;
 non terminal IOperation expr;
 non terminal SetOperation statement;
-
-precedence left UNION;
 
 start with ini;
 
@@ -66,6 +67,9 @@ statement ::= OPERATION LPAREN expr:e RPAREN {: RESULT = new SetOperation(e); :}
 
 
 expr ::= conjunto:c {: RESULT = c; :}
-       | expr:e1 UNION expr:e2 {: RESULT = new Union(e1, e2); :}
+       |  UNION expr:e1 expr:e2 {: RESULT = new Union(e1, e2); :}
+       |  INTERSEC expr:e1 expr:e2 {: RESULT = new Intersection(e1, e2); :}
+       |  DIFF expr:e1 expr:e2 {: RESULT = new Difference(e1, e2); :}
+       |  COMPLEMENT expr:e {: RESULT = new Complement(e); :}
        | LPAREN expr:e RPAREN {: RESULT = e; :}
        ;

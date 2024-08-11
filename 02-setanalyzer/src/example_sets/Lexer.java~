@@ -731,7 +731,7 @@ public class Lexer implements java_cup.runtime.Scanner {
           // fall through
           case 18: break;
           case 3:
-            { return new Symbol(sym.INTERSECTION, yyline, (int) yychar, yytext());
+            { return new Symbol(sym.INTERSEC, yyline, (int) yychar, yytext());
             }
           // fall through
           case 19: break;
@@ -751,7 +751,7 @@ public class Lexer implements java_cup.runtime.Scanner {
           // fall through
           case 22: break;
           case 7:
-            { return new Symbol(sym.DIFFERENCE, yyline, (int) yychar, yytext());
+            { return new Symbol(sym.DIFF, yyline, (int) yychar, yytext());
             }
           // fall through
           case 23: break;

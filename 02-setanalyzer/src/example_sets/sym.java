@@ -8,24 +8,30 @@ package example_sets;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int LBRACE = 7;
-  public static final int COLON = 9;
+  public static final int LBRACE = 10;
+  public static final int COLON = 12;
   public static final int UNION = 3;
-  public static final int NUMBER = 5;
+  public static final int NUMBER = 8;
   public static final int CONJ = 2;
   public static final int EOF = 0;
-  public static final int VAR = 4;
-  public static final int COMMA = 10;
+  public static final int VAR = 7;
+  public static final int COMPLEMENT = 6;
+  public static final int INTERSEC = 4;
+  public static final int COMMA = 13;
   public static final int error = 1;
-  public static final int RPAREN = 12;
-  public static final int LPAREN = 11;
-  public static final int RBRACE = 8;
-  public static final int OPERATION = 6;
+  public static final int RPAREN = 15;
+  public static final int DIFF = 5;
+  public static final int LPAREN = 14;
+  public static final int RBRACE = 11;
+  public static final int OPERATION = 9;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "CONJ",
   "UNION",
+  "INTERSEC",
+  "DIFF",
+  "COMPLEMENT",
   "VAR",
   "NUMBER",
   "OPERATION",
