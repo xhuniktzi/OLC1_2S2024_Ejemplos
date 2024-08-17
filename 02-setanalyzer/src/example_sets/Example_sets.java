@@ -23,8 +23,8 @@ public class Example_sets {
         // TODO code application logic here
         String input1 = """
                         CONJ conja : {1,2,3}
-                        CONJ datab : {4,5,6}
-                        CONJ setc : {4, 3}$
+                        CONJ datab :{4,5,6}
+                        CONJ setc : {4, 3}
                         CONJ conjU : {9}
                         OPERATION (  ^ & datab setc)
                         """;
@@ -45,6 +45,13 @@ public class Example_sets {
             if (!scanner.lexicalErrors.isEmpty()){
                 System.out.println("Errores lexicos: ");
                 for (String err: scanner.lexicalErrors){
+                    System.err.println(err);
+                }
+            }
+            
+            if (!parser.syntaxErrors.isEmpty()){
+                System.out.println("Errores sintacticos: ");
+                for (String err: parser.syntaxErrors){
                     System.err.println(err);
                 }
             }
