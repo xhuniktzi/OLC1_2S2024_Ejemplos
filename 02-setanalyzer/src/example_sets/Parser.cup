@@ -15,6 +15,7 @@ import example_sets.operations.Complement;
 
 parser code {:
     public LinkedList<IStatement> AST;
+    public LinkedList<String> syntaxErrors = new LinkedList<>();
 
     public void unrecovered_syntax_error(Symbol s) throws Exception {
         throw new Exception("Error irrecuperable en (linea, columna): " + s.left + ", " + s.right);
@@ -22,6 +23,7 @@ parser code {:
 
     public void report_error(String message, Object info) {
         System.err.println("Error: " + message + " at " + info);
+        syntaxErrors.add("Error: " + message + " at " + info);
     }
 :}
 
@@ -71,5 +73,4 @@ expr ::= conjunto:c {: RESULT = c; :}
        |  INTERSEC expr:e1 expr:e2 {: RESULT = new Intersection(e1, e2); :}
        |  DIFF expr:e1 expr:e2 {: RESULT = new Difference(e1, e2); :}
        |  COMPLEMENT expr:e {: RESULT = new Complement(e); :}
-       | LPAREN expr:e RPAREN {: RESULT = e; :}
        ;

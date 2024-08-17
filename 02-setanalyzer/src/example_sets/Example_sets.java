@@ -22,11 +22,11 @@ public class Example_sets {
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
         String input1 = """
-                        CONJ conja : {1,2,3}
-                        CONJ datab :{4,5,6}
-                        CONJ setc : {4, 3}
-                        CONJ conjU : {9}
-                        OPERATION (  ^ & datab setc)
+                        CONJ setA : {1, 2, 3}
+                        CONJ setB : {4, 5, 6
+                        OPERATION (^ & setA setB )
+                        CONJ setC : {8 9,}
+                        OPERATION ( U setA setC )
                         """;
 
         Lexer scanner = new Lexer(new StringReader(input1));

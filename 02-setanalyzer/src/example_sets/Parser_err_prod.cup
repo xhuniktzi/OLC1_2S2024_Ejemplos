@@ -36,7 +36,7 @@ terminal String OPERATION;
 terminal String LBRACE, RBRACE, COLON, COMMA, LPAREN, RPAREN;
 
 non terminal ini;
-non terminal LinkedList <IStatement> instrucciones;
+non terminal LinkedList<IStatement> instrucciones;
 non terminal IStatement instruccion;
 non terminal SetDefine conjunto_def;
 non terminal Set<Integer> conjunto_elements;
@@ -71,4 +71,4 @@ expr ::= conjunto:c {: RESULT = c; :}
        | INTERSEC expr:e1 expr:e2 {: RESULT = new Intersection(e1, e2); :}
        | DIFF expr:e1 expr:e2 {: RESULT = new Difference(e1, e2); :}
        | COMPLEMENT expr:e {: RESULT = new Complement(e); :}
-       | LPAREN expr:e RPAREN {: RESULT = e; :};
+       | error {: parser.syntaxErrors.add("Error in expression"); RESULT = null; :};  // Producción de error en expr
