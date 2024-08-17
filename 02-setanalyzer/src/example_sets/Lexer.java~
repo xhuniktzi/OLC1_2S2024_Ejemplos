@@ -4,6 +4,7 @@
 
 package example_sets;
 
+import java.util.LinkedList;
 import java_cup.runtime.Symbol;
 
 
@@ -296,7 +297,7 @@ public class Lexer implements java_cup.runtime.Scanner {
   private boolean zzEOFDone;
 
   /* user code: */
-
+    public LinkedList<String> lexicalErrors = new LinkedList<>();
 
 
   /**
@@ -721,7 +722,8 @@ public class Lexer implements java_cup.runtime.Scanner {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
-            { System.err.println("Illegal character: " + yytext()); return new Symbol(sym.error);
+            { lexicalErrors.add("Illegal character '" + yytext() + "' at line " + yyline + ", column " + yychar); 
+                     return new Symbol(sym.error);
             }
           // fall through
           case 17: break;

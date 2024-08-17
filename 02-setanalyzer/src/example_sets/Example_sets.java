@@ -24,13 +24,14 @@ public class Example_sets {
         String input1 = """
                         CONJ conja : {1,2,3}
                         CONJ datab : {4,5,6}
-                        CONJ setc : {4, 3}
+                        CONJ setc : {4, 3}$
                         CONJ conjU : {9}
                         OPERATION (  ^ & datab setc)
                         """;
 
         Lexer scanner = new Lexer(new StringReader(input1));
         Parser parser = new Parser(scanner);
+        try {
         parser.parse();
         LinkedList<IStatement> AST = parser.AST;
         SymTable environment = new SymTable();
@@ -38,6 +39,17 @@ public class Example_sets {
         for (IStatement s : AST) {
             s.execute(environment);
         }
+        } catch (Exception ex){
+            System.err.println("Excepción capturada");
+        } finally {
+            if (!scanner.lexicalErrors.isEmpty()){
+                System.out.println("Errores lexicos: ");
+                for (String err: scanner.lexicalErrors){
+                    System.err.println(err);
+                }
+            }
+        }
+
     }
     
 }

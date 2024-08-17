@@ -1,5 +1,6 @@
 package example_sets;
 
+import java.util.LinkedList;
 import java_cup.runtime.Symbol;
 
 %%
@@ -13,7 +14,7 @@ import java_cup.runtime.Symbol;
 %ignorecase
 
 %{
-
+    public LinkedList<String> lexicalErrors = new LinkedList<>();
 %}
 
 %%
@@ -33,4 +34,5 @@ import java_cup.runtime.Symbol;
 "("              { return new Symbol(sym.LPAREN, yyline, (int) yychar, yytext()); }
 ")"              { return new Symbol(sym.RPAREN, yyline, (int) yychar, yytext()); }
 [ \t\n\r\f]+     { /* Ignorar espacios en blanco */ }
-.                { System.err.println("Illegal character: " + yytext()); return new Symbol(sym.error); }
+.                { lexicalErrors.add("Illegal character '" + yytext() + "' at line " + yyline + ", column " + yychar); 
+                     return new Symbol(sym.error);  }
