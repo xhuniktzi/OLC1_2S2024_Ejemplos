@@ -25,20 +25,21 @@ public class Example_sets {
             parser.parse();
             AST = parser.AST;
         } catch (Exception ex) {
-            System.err.println("Excepción capturada: " + ex.getMessage());
+            // Capturar cualquier excepción durante el proceso de parsing
+            System.out.println("Excepción capturada: " + ex.getMessage());
         } finally {
             // Ahora se imprime tanto errores léxicos como sintácticos al final del parsing
             if (!scanner.lexicalErrors.isEmpty()) {
                 System.out.println("Errores lexicos:");
                 for (String err : scanner.lexicalErrors) {
-                    System.err.println(err);
+                    System.out.println(err); // Usar System.out en lugar de System.err
                 }
             }
 
             if (!parser.syntaxErrors.isEmpty()) {
                 System.out.println("Errores sintacticos:");
                 for (String err : parser.syntaxErrors) {
-                    System.err.println(err);
+                    System.out.println(err); // Usar System.out en lugar de System.err
                 }
             }
 

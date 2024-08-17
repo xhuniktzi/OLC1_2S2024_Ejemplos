@@ -5,13 +5,7 @@ import java.util.*;
 
 import example_sets.contracts.IOperation;
 import example_sets.contracts.IStatement;
-import example_sets.operations.SetDefine;
-import example_sets.operations.SetOperation;
-import example_sets.operations.SetReference;
-import example_sets.operations.Union;
-import example_sets.operations.Difference;
-import example_sets.operations.Intersection;
-import example_sets.operations.Complement;
+import example_sets.operations.*;
 
 parser code {:
     public LinkedList<IStatement> AST = new LinkedList<>();
@@ -45,6 +39,7 @@ parser code {:
     @Override
     public void unrecovered_syntax_error(Symbol s) throws Exception {
         syntaxErrors.add("Unrecoverable syntax error at line " + s.left + ", column " + s.right);
+        // No lanzamos la excepción aquí, solo agregamos el error a la lista
     }
 :}
 
