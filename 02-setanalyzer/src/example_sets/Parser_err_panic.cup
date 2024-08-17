@@ -14,7 +14,7 @@ import example_sets.operations.Intersection;
 import example_sets.operations.Complement;
 
 parser code {:
-    public LinkedList<IStatement> AST;
+    public LinkedList<IStatement> AST = new LinkedList<>();
     public LinkedList<String> syntaxErrors = new LinkedList<>();
 
     @Override
@@ -24,21 +24,27 @@ parser code {:
     }
 
     @Override
-    public void report_fatal_error(String message, Object info) throws Exception  {
+    public void report_fatal_error(String message, Object info) {
         Symbol s = (Symbol) info;
         syntaxErrors.add("Fatal syntax error at line " + s.left + ", column " + s.right + ": " + message);
 
         // Modo pánico: Descartar tokens hasta un punto de sincronización y almacenar los tokens descartados como errores.
         Symbol token;
         do {
-            token = scan();
-            syntaxErrors.add("Discarded token at line " + token.left + ", column " + token.right + ": " + token.value);
-        } while (token.sym != sym.RBRACE && token.sym != sym.EOF);
+            try {
+                token = scan();
+                if (token != null) {
+                    syntaxErrors.add("Discarded token at line " + token.left + ", column " + token.right + ": " + token.value);
+                }
+            } catch (Exception e) {
+                break;
+            }
+        } while (token.sym != sym.RBRACE && token.sym != sym.EOF);  // punto de sincronización
     }
 
     @Override
     public void unrecovered_syntax_error(Symbol s) throws Exception {
-        throw new Exception("Unrecoverable syntax error at line " + s.left + ", column " + s.right);
+        syntaxErrors.add("Unrecoverable syntax error at line " + s.left + ", column " + s.right);
     }
 :}
 
@@ -49,7 +55,7 @@ terminal String OPERATION;
 terminal String LBRACE, RBRACE, COLON, COMMA, LPAREN, RPAREN;
 
 non terminal ini;
-non terminal LinkedList <IStatement> instrucciones;
+non terminal LinkedList<IStatement> instrucciones;
 non terminal IStatement instruccion;
 non terminal SetDefine conjunto_def;
 non terminal Set<Integer> conjunto_elements;
@@ -59,12 +65,10 @@ non terminal SetOperation statement;
 
 start with ini;
 
-ini ::= instrucciones:i {: parser.AST = i; :}
-      ;
+ini ::= instrucciones:i {: parser.AST = i; :};
 
 instrucciones ::= instrucciones:i instruccion:j {: RESULT = i; RESULT.add(j); :}
-                | instruccion:i {: RESULT = new LinkedList<IStatement>(); RESULT.add(i); :}
-                ;
+                | instruccion:i {: RESULT = new LinkedList<IStatement>(); RESULT.add(i); :};
 
 instruccion ::= conjunto_def:s {: RESULT = s; :}
               | statement:s {: RESULT = s; :};
@@ -82,5 +86,4 @@ expr ::= conjunto:c {: RESULT = c; :}
        | UNION expr:e1 expr:e2 {: RESULT = new Union(e1, e2); :}
        | INTERSEC expr:e1 expr:e2 {: RESULT = new Intersection(e1, e2); :}
        | DIFF expr:e1 expr:e2 {: RESULT = new Difference(e1, e2); :}
-       | COMPLEMENT expr:e {: RESULT = new Complement(e); :}
-       ;
+       | COMPLEMENT expr:e {: RESULT = new Complement(e); :};

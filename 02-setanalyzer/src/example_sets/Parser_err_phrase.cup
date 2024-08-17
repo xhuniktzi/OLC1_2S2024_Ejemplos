@@ -14,7 +14,7 @@ import example_sets.operations.Intersection;
 import example_sets.operations.Complement;
 
 parser code {:
-    public LinkedList<IStatement> AST;
+    public LinkedList<IStatement> AST = new LinkedList<>();
     public LinkedList<String> syntaxErrors = new LinkedList<>();
 
     @Override
@@ -25,7 +25,7 @@ parser code {:
 
     @Override
     public void unrecovered_syntax_error(Symbol s) throws Exception {
-        throw new Exception("Unrecoverable syntax error at line " + s.left + ", column " + s.right);
+        syntaxErrors.add("Unrecoverable syntax error at line " + s.left + ", column " + s.right);
     }
 :}
 
@@ -46,31 +46,28 @@ non terminal SetOperation statement;
 
 start with ini;
 
-ini ::= instrucciones:i {: parser.AST = i; :}
-      ;
+ini ::= instrucciones:i {: parser.AST = i; :};
 
 instrucciones ::= instrucciones:i instruccion:j {: RESULT = i; RESULT.add(j); :}
-                | instruccion:i {: RESULT = new LinkedList<IStatement>(); RESULT.add(i); :}
-                ;
+                | instruccion:i {: RESULT = new LinkedList<IStatement>(); RESULT.add(i); :};
 
 instruccion ::= conjunto_def:s {: RESULT = s; :}
               | statement:s {: RESULT = s; :};
 
 conjunto_def ::= CONJ VAR:n COLON LBRACE conjunto_elements:c RBRACE {: RESULT = new SetDefine(n, c); :}
-               | CONJ VAR:n COLON error RBRACE {: parser.syntaxErrors.add("Error in set elements"); RESULT = new SetDefine(n, new HashSet<>()); :};  // Corrección local en conjunto_def
+               | CONJ VAR:n COLON error RBRACE {: parser.syntaxErrors.add("Error in set elements"); RESULT = new SetDefine(n, new HashSet<>()); :};
 
 conjunto_elements ::= conjunto_elements:c COMMA NUMBER:n {: RESULT = c; c.add(Integer.valueOf(n)); :}
-                    | NUMBER:n {: RESULT = new HashSet<>(); RESULT.add(Integer.valueOf(n)); :};
+                    | NUMBER:n {: RESULT = new HashSet<>(); RESULT.add(Integer.valueOf(n)); :}
+                    | error {: parser.syntaxErrors.add("Error in set element"); RESULT = new HashSet<>(); :};
 
 conjunto ::= VAR:c {: RESULT = new SetReference(c); :};
 
 statement ::= OPERATION LPAREN expr:e RPAREN {: RESULT = new SetOperation(e); :}
-             | OPERATION LPAREN error RPAREN {: parser.syntaxErrors.add("Error in operation expression"); RESULT = null; :};  // Corrección local en statement
+             | OPERATION LPAREN error RPAREN {: parser.syntaxErrors.add("Error in operation expression"); RESULT = null; :};
 
 expr ::= conjunto:c {: RESULT = c; :}
        | UNION expr:e1 expr:e2 {: RESULT = new Union(e1, e2); :}
        | INTERSEC expr:e1 expr:e2 {: RESULT = new Intersection(e1, e2); :}
        | DIFF expr:e1 expr:e2 {: RESULT = new Difference(e1, e2); :}
-       | COMPLEMENT expr:e {: RESULT = new Complement(e); :}
-       ;
-
+       | COMPLEMENT expr:e {: RESULT = new Complement(e); :};
