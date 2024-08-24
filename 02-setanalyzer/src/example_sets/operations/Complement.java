@@ -15,7 +15,7 @@ import java.util.Set;
  * @author xhuni
  */
 public class Complement implements IOperation {
-    private final IOperation op;
+    final IOperation op;
 
     public Complement(IOperation op) {
         this.op = op;

@@ -13,7 +13,7 @@ import java.util.Set;
  * @author xhuni
  */
 public class SetReference implements IOperation {
-    private final String name;
+    public final String name;
 
     public SetReference(String name) {
         this.name = name;

@@ -10,10 +10,8 @@ public class Example_sets {
     public static void main(String[] args) throws Exception {
         String input1 = """
                         CONJ setA : {1, 2, 3}
-                        CONJ setB : {4, 5, 6
-                        OPERATION (^ & setA setB )
-                        CONJ setC : {8 9,}
-                        OPERATION ( U setA setC )
+                        OPERATION ( U setA setA )
+                        OPERATION (^^ setA)
                         """;
 
         Lexer scanner = new Lexer(new StringReader(input1));
