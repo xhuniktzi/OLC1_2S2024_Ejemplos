@@ -21,6 +21,8 @@ import java_cup.runtime.Symbol;
 
 "CONJ"             { return new Symbol(sym.CONJ, yyline, (int) yychar, yytext()); }
 "OPERATION"        { return new Symbol(sym.OPERATION, yyline, (int) yychar, yytext()); }
+"SCOPE"        { return new Symbol(sym.SCOPE, yyline, (int) yychar, yytext()); }
+
 "U"                { return new Symbol(sym.UNION, yyline, (int) yychar, yytext()); }
 "&"                { return new Symbol(sym.INTERSEC, yyline, (int) yychar, yytext()); }
 "-"                { return new Symbol(sym.DIFF, yyline, (int) yychar, yytext()); }
@@ -33,9 +35,6 @@ import java_cup.runtime.Symbol;
 ","              { return new Symbol(sym.COMMA, yyline, (int) yychar, yytext()); }
 "("              { return new Symbol(sym.LPAREN, yyline, (int) yychar, yytext()); }
 ")"              { return new Symbol(sym.RPAREN, yyline, (int) yychar, yytext()); }
-
-"}"             { return new Symbol(sym.LBRACKET, yyline, (int) yychar, yytext()); }
-"{"             { return new Symbol(sym.RBRACKET, yyline, (int) yychar, yytext()); }
 
 \n                    {yychar=0;}
 [ \t\r\f]+     { /* Ignorar espacios en blanco */ }

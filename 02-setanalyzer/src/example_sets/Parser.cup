@@ -47,7 +47,9 @@ terminal String VAR;
 terminal String NUMBER;
 terminal String OPERATION;
 terminal String LBRACE, RBRACE, COLON, COMMA, LPAREN, RPAREN;
-terminal String LBRACKET, RBRACKET;
+
+terminal String SCOPE;
+
 
 non terminal ini;
 non terminal LinkedList<IStatement> instrucciones;
@@ -57,6 +59,7 @@ non terminal Set<Integer> conjunto_elements;
 non terminal SetReference conjunto;
 non terminal IOperation expr;
 non terminal SetOperation statement;
+non terminal IStatement scope_block;
 
 start with ini;
 
@@ -66,9 +69,17 @@ instrucciones ::= instrucciones:i instruccion:j {: RESULT = i; RESULT.add(j); :}
                 | instruccion:i {: RESULT = new LinkedList<IStatement>(); RESULT.add(i); :}
                 ;
 
+
 instruccion ::= conjunto_def:s {: RESULT = s; :}
               | statement:s {: RESULT = s; :}
+              | scope_block:s {: RESULT = s; :}
               | error {: parser.syntaxErrors.add("Error in instruction"); RESULT = null; :};
+
+scope_block ::= SCOPE VAR:n LBRACE instrucciones:i RBRACE 
+    {: 
+        // Abre un nuevo scope
+        RESULT = new ScopeStatement(n, i); 
+    :};
 
 conjunto_def ::= CONJ VAR:n COLON LBRACE conjunto_elements:c RBRACE {: RESULT = new SetDefine(n, c); :}
                | CONJ VAR:n COLON error RBRACE {: parser.syntaxErrors.add("Error in set elements"); RESULT = new SetDefine(n, new HashSet<>()); :};

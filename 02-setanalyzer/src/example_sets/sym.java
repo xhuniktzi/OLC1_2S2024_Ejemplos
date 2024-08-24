@@ -16,6 +16,7 @@ public class sym {
   public static final int EOF = 0;
   public static final int VAR = 7;
   public static final int COMPLEMENT = 6;
+  public static final int SCOPE = 16;
   public static final int INTERSEC = 4;
   public static final int COMMA = 13;
   public static final int error = 1;
@@ -40,7 +41,8 @@ public class sym {
   "COLON",
   "COMMA",
   "LPAREN",
-  "RPAREN"
+  "RPAREN",
+  "SCOPE"
   };
 }
 
