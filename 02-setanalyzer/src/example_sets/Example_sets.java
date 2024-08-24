@@ -58,6 +58,12 @@ public class Example_sets {
                     s.execute(environment);
                 }
                 System.out.println("\n\n");
+                
+                System.out.println("Tablas de simbolos:");
+                // Imprime todas las tablas de símbolos creadas
+                environment.printAllScopes();
+                System.out.println("\n\n");
+                
                 StringBuilder str = new StringBuilder();
                 str.append("""
                            digraph G {
