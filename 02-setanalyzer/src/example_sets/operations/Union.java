@@ -13,7 +13,7 @@ import java.util.Set;
  *
  * @author xhuni
  */
-public class Union implements IOperation {
+public class Union extends IOperation {
     private final IOperation op1, op2;
 
     public Union(IOperation op1, IOperation op2) {
@@ -29,7 +29,23 @@ public class Union implements IOperation {
     }
 
     @Override
-    public IOperation simplify(SymTable table) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public String graph() {
+        StringBuilder str = new StringBuilder();
+        str.append("O_")
+                .append(id);
+        
+        str.append("[label=\"Union\"];\n");
+        
+        str.append("O_").append(id).append(" -> ")
+                .append("O_").append(op1.getId()).append(";\n");
+        
+        str.append(op1.graph());
+        
+                str.append("O_").append(id).append(" -> ")
+                .append("O_").append(op2.getId()).append(";\n");
+        
+        str.append(op2.graph());
+        
+        return str.toString();
     }
 }

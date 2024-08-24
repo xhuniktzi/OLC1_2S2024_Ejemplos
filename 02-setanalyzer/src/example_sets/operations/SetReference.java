@@ -12,7 +12,7 @@ import java.util.Set;
  *
  * @author xhuni
  */
-public class SetReference implements IOperation {
+public class SetReference extends IOperation {
     private final String name;
 
     public SetReference(String name) {
@@ -28,8 +28,14 @@ public class SetReference implements IOperation {
         return table.get(name);
     }
 
+
     @Override
-    public IOperation simplify(SymTable table) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public String graph() {
+        StringBuilder str = new StringBuilder();
+        str.append("O_")
+                .append(id);
+        str.append("[label=\"").append(name).append("\"];\n");
+        
+        return str.toString();
     }
 }

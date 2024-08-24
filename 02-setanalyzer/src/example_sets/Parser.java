@@ -9,13 +9,7 @@ import java_cup.runtime.Symbol;
 import java.util.*;
 import example_sets.contracts.IOperation;
 import example_sets.contracts.IStatement;
-import example_sets.operations.SetDefine;
-import example_sets.operations.SetOperation;
-import example_sets.operations.SetReference;
-import example_sets.operations.Union;
-import example_sets.operations.Difference;
-import example_sets.operations.Intersection;
-import example_sets.operations.Complement;
+import example_sets.operations.*;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
@@ -159,6 +153,25 @@ public class Parser extends java_cup.runtime.lr_parser {
     public void report_error(String message, Object info) {
         Symbol s = (Symbol) info;
         syntaxErrors.add("Syntax error at line " + s.left + ", column " + s.right + ": " + message);
+    }
+
+    @Override
+    public void report_fatal_error(String message, Object info) {
+        Symbol s = (Symbol) info;
+        syntaxErrors.add("Fatal syntax error at line " + s.left + ", column " + s.right + ": " + message);
+
+        // Modo pánico: Descartar tokens hasta un punto de sincronización y almacenar los tokens descartados como errores.
+        Symbol token;
+        do {
+            try {
+                token = scan();
+                if (token != null) {
+                    syntaxErrors.add("Discarded token at line " + token.left + ", column " + token.right + ": " + token.value);
+                }
+            } catch (Exception e) {
+                break;
+            }
+        } while (token.sym != sym.RBRACE && token.sym != sym.EOF);  // punto de sincronización
     }
 
     @Override

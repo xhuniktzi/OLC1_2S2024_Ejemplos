@@ -12,7 +12,7 @@ import java.util.Set;
  *
  * @author xhuni
  */
-public class SetDefine implements IStatement {
+public class SetDefine extends IStatement {
     private final String name;
     private final Set<Integer> elements;
 
@@ -26,7 +26,28 @@ public class SetDefine implements IStatement {
         table.add(name, elements);
         System.out.println("Conjunto: " + name + ", definido con los elementos: " + elements);
     }
-    
+
+    @Override
+    public String graph() {
+        StringBuilder str = new StringBuilder();
+        str.append("S_")
+                .append(id);
+        str.append("[label=\"Definir conjunto: ")
+                .append(name).append("\"];\n");
+        
+        for (Integer element : elements) {
+            str.append("S_").append(id)
+                    .append(" -> ")
+                    .append("S_").append(id)
+                    .append("_E_").append(element).append("\n");
+            
+            
+            str.append("S_").append(id)
+                    .append("_E_").append(element)
+                    .append("[label=\"Elemento: ").append(element).append("\"];\n");
+        }
+        return str.toString();
+    }
    
     
 }

@@ -13,7 +13,6 @@ import java.util.Set;
  *
  * @author xhuni
  */
-public interface IOperation {
-    Set<Integer> eval(SymTable table);
-    IOperation simplify(SymTable table);
+public abstract class IOperation extends IGraphicable{
+    public abstract Set<Integer> eval(SymTable table);
 }
