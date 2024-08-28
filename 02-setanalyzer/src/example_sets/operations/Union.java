@@ -13,7 +13,7 @@ import java.util.Set;
  *
  * @author xhuni
  */
-public class Union implements IOperation {
+public class Union extends IOperation {
     public final IOperation op1, op2;
 
     public Union(IOperation op1, IOperation op2) {

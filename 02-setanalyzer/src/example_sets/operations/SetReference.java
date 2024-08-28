@@ -12,7 +12,7 @@ import java.util.Set;
  *
  * @author xhuni
  */
-public class SetReference implements IOperation {
+public class SetReference extends IOperation {
     public final String name;
 
     public SetReference(String name) {
