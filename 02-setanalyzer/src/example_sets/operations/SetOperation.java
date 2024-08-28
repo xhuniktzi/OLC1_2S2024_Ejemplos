@@ -7,6 +7,8 @@ package example_sets.operations;
 import example_sets.contracts.IOperation;
 import example_sets.contracts.IStatement;
 import example_sets.symbols.SymTable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -15,6 +17,8 @@ import java.util.Set;
  */
 public class SetOperation extends IStatement {
     private final IOperation op;
+    private List<String> appliedLaws = new ArrayList<String>();
+
 
     public SetOperation(IOperation op) {
         this.op = op;
@@ -22,8 +26,26 @@ public class SetOperation extends IStatement {
 
     @Override
     public void execute(SymTable table) {
-        Set<Integer> result = this.op.eval(table);
-        System.out.println("Resultado de la operación: " + result);
+        // Evaluar la operación original
+        Set<Integer> originalResult = op.eval(table);
+        
+        // Simplificar la operación
+        IOperation simplifiedOp = simplify(op);
+        Set<Integer> simplifiedResult = simplifiedOp.eval(table);
+
+        // Imprimir resultados
+        System.out.println("Resultado de la operación original: " + originalResult);
+        System.out.println("Resultado de la operación simplificada: " + simplifiedResult);
+        
+        // Imprimir leyes aplicadas
+        if (!appliedLaws.isEmpty()) {
+            System.out.println("Leyes aplicadas:");
+            for (String law : appliedLaws) {
+                System.out.println("- " + law);
+            }
+        } else {
+            System.out.println("No se aplicaron leyes de simplificación.");
+        }
     }
 
     @Override
@@ -42,5 +64,27 @@ public class SetOperation extends IStatement {
         return str.toString();
     }
     
+    
+    private IOperation simplify(IOperation operation){
+        // idempotencia: A U A = A, A & A = A
+        if (operation instanceof Union opUnion){
+            if (opUnion.op1 instanceof SetReference ref1 && opUnion.op2 instanceof SetReference ref2){
+                if (ref1.name.equals(ref2.name)){
+                    appliedLaws.add("Idempotencia");
+                    return opUnion.op1;
+                }
+            }
+        }
+      
+        // doble complemento: ^^ A = A
+        if (operation instanceof Complement opComplement){
+            if (opComplement.op instanceof Complement opComplement2){
+                appliedLaws.add("Doble complemento");
+                return opComplement;
+            }
+        }
+        
+        return operation;
+    }
     
 }

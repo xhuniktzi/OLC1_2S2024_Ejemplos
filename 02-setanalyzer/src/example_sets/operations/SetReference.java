@@ -12,8 +12,8 @@ import java.util.Set;
  *
  * @author xhuni
  */
-public class SetReference extends IOperation {
-    private final String name;
+public class SetReference implements IOperation {
+    public final String name;
 
     public SetReference(String name) {
         this.name = name;
