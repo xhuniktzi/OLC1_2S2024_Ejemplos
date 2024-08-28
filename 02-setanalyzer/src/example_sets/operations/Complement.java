@@ -14,7 +14,7 @@ import java.util.Set;
  *
  * @author xhuni
  */
-public class Complement implements IOperation {
+public class Complement extends IOperation {
     private final IOperation op;
 
     public Complement(IOperation op) {
@@ -28,8 +28,19 @@ public class Complement implements IOperation {
         return result;
     }
 
+
     @Override
-    public IOperation simplify(SymTable table) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public String graph() {
+        StringBuilder str = new StringBuilder();
+        str.append("O_")
+                .append(id);
+        
+        str.append("[label=\"Complemento\"];\n");
+        
+        str.append("O_").append(id).append(" -> ")
+                .append("O_").append(op.getId()).append(";\n");
+        
+        str.append(op.graph());
+        return str.toString();
     }
 }

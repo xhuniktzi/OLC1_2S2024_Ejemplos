@@ -21,6 +21,8 @@ import java_cup.runtime.Symbol;
 
 "CONJ"             { return new Symbol(sym.CONJ, yyline, (int) yychar, yytext()); }
 "OPERATION"        { return new Symbol(sym.OPERATION, yyline, (int) yychar, yytext()); }
+"SCOPE"        { return new Symbol(sym.SCOPE, yyline, (int) yychar, yytext()); }
+
 "U"                { return new Symbol(sym.UNION, yyline, (int) yychar, yytext()); }
 "&"                { return new Symbol(sym.INTERSEC, yyline, (int) yychar, yytext()); }
 "-"                { return new Symbol(sym.DIFF, yyline, (int) yychar, yytext()); }
@@ -33,6 +35,10 @@ import java_cup.runtime.Symbol;
 ","              { return new Symbol(sym.COMMA, yyline, (int) yychar, yytext()); }
 "("              { return new Symbol(sym.LPAREN, yyline, (int) yychar, yytext()); }
 ")"              { return new Symbol(sym.RPAREN, yyline, (int) yychar, yytext()); }
-[ \t\n\r\f]+     { /* Ignorar espacios en blanco */ }
+
+\n                    {yychar=0;}
+[ \t\r\f]+     { /* Ignorar espacios en blanco */ }
+
+
 .                { lexicalErrors.add("Illegal character '" + yytext() + "' at line " + yyline + ", column " + yychar); 
                      return new Symbol(sym.error);  }

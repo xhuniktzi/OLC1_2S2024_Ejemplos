@@ -10,6 +10,6 @@ import example_sets.symbols.SymTable;
  *
  * @author xhuni
  */
-public interface IStatement {
-    void execute(SymTable table);
+public abstract class IStatement extends IGraphicable {
+    public abstract void execute(SymTable table);
 }

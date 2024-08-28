@@ -5,25 +5,40 @@ import java.util.*;
 
 import example_sets.contracts.IOperation;
 import example_sets.contracts.IStatement;
-import example_sets.operations.SetDefine;
-import example_sets.operations.SetOperation;
-import example_sets.operations.SetReference;
-import example_sets.operations.Union;
-import example_sets.operations.Difference;
-import example_sets.operations.Intersection;
-import example_sets.operations.Complement;
+import example_sets.operations.*;
 
 parser code {:
-    public LinkedList<IStatement> AST;
+    public LinkedList<IStatement> AST = new LinkedList<>();
     public LinkedList<String> syntaxErrors = new LinkedList<>();
 
-    public void unrecovered_syntax_error(Symbol s) throws Exception {
-        throw new Exception("Error irrecuperable en (linea, columna): " + s.left + ", " + s.right);
+    @Override
+    public void report_error(String message, Object info) {
+        Symbol s = (Symbol) info;
+        syntaxErrors.add("Syntax error at line " + s.left + ", column " + s.right + ": " + message);
     }
 
-    public void report_error(String message, Object info) {
-        System.err.println("Error: " + message + " at " + info);
-        syntaxErrors.add("Error: " + message + " at " + info);
+    @Override
+    public void report_fatal_error(String message, Object info) {
+        Symbol s = (Symbol) info;
+        syntaxErrors.add("Fatal syntax error at line " + s.left + ", column " + s.right + ": " + message);
+
+        // Modo pánico: Descartar tokens hasta un punto de sincronización y almacenar los tokens descartados como errores.
+        Symbol token;
+        do {
+            try {
+                token = scan();
+                if (token != null) {
+                    syntaxErrors.add("Discarded token at line " + token.left + ", column " + token.right + ": " + token.value);
+                }
+            } catch (Exception e) {
+                break;
+            }
+        } while (token.sym != sym.RBRACE && token.sym != sym.EOF);  // punto de sincronización
+    }
+
+    @Override
+    public void unrecovered_syntax_error(Symbol s) throws Exception {
+        syntaxErrors.add("Unrecoverable syntax error at line " + s.left + ", column " + s.right);
     }
 :}
 
@@ -33,44 +48,53 @@ terminal String NUMBER;
 terminal String OPERATION;
 terminal String LBRACE, RBRACE, COLON, COMMA, LPAREN, RPAREN;
 
+terminal String SCOPE;
+
+
 non terminal ini;
-non terminal LinkedList <IStatement> instrucciones;
+non terminal LinkedList<IStatement> instrucciones;
 non terminal IStatement instruccion;
 non terminal SetDefine conjunto_def;
 non terminal Set<Integer> conjunto_elements;
 non terminal SetReference conjunto;
 non terminal IOperation expr;
 non terminal SetOperation statement;
+non terminal IStatement scope_block;
 
 start with ini;
 
-ini ::= instrucciones:i {: parser.AST = i; :}
-      ;
+ini ::= instrucciones:i {: parser.AST = i; :};
 
 instrucciones ::= instrucciones:i instruccion:j {: RESULT = i; RESULT.add(j); :}
                 | instruccion:i {: RESULT = new LinkedList<IStatement>(); RESULT.add(i); :}
                 ;
 
-instruccion ::=  conjunto_def:s {: RESULT = s; :}
-                | statement:s {: RESULT = s; :};
+
+instruccion ::= conjunto_def:s {: RESULT = s; :}
+              | statement:s {: RESULT = s; :}
+              | scope_block:s {: RESULT = s; :}
+              | error {: parser.syntaxErrors.add("Error in instruction"); RESULT = null; :};
+
+scope_block ::= SCOPE VAR:n LBRACE instrucciones:i RBRACE 
+    {: 
+        // Abre un nuevo scope
+        RESULT = new ScopeStatement(n, i); 
+    :};
 
 conjunto_def ::= CONJ VAR:n COLON LBRACE conjunto_elements:c RBRACE {: RESULT = new SetDefine(n, c); :}
-                    ;
+               | CONJ VAR:n COLON error RBRACE {: parser.syntaxErrors.add("Error in set elements"); RESULT = new SetDefine(n, new HashSet<>()); :};
 
 conjunto_elements ::= conjunto_elements:c COMMA NUMBER:n {: RESULT = c; c.add(Integer.valueOf(n)); :}
                     | NUMBER:n {: RESULT = new HashSet<>(); RESULT.add(Integer.valueOf(n)); :}
-                    ;
+                    | error {: parser.syntaxErrors.add("Error in set element"); RESULT = new HashSet<>(); :};
 
-conjunto ::= VAR:c {: RESULT = new SetReference(c); :}
-           ;
+conjunto ::= VAR:c {: RESULT = new SetReference(c); :};
 
 statement ::= OPERATION LPAREN expr:e RPAREN {: RESULT = new SetOperation(e); :}
-             ;
-
+             | OPERATION LPAREN error RPAREN {: parser.syntaxErrors.add("Error in operation expression"); RESULT = null; :};
 
 expr ::= conjunto:c {: RESULT = c; :}
-       |  UNION expr:e1 expr:e2 {: RESULT = new Union(e1, e2); :}
-       |  INTERSEC expr:e1 expr:e2 {: RESULT = new Intersection(e1, e2); :}
-       |  DIFF expr:e1 expr:e2 {: RESULT = new Difference(e1, e2); :}
-       |  COMPLEMENT expr:e {: RESULT = new Complement(e); :}
-       ;
+       | UNION expr:e1 expr:e2 {: RESULT = new Union(e1, e2); :}
+       | INTERSEC expr:e1 expr:e2 {: RESULT = new Intersection(e1, e2); :}
+       | DIFF expr:e1 expr:e2 {: RESULT = new Difference(e1, e2); :}
+       | COMPLEMENT expr:e {: RESULT = new Complement(e); :};
