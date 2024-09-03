@@ -1,0 +1,27 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --outDir dist",
+    "compile": "ts-jison -t typescript -n TsJisonExample -n TsJisonExample -o src/analyzers/ts-jison-example.ts src/analyzers/grammar.jison",
+    "start": "node dist/index.js",
+    "dev": "concurrently \"tsc --watch --outDir dist\" \"nodemon -q dist/index.js\""
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@ts-jison/parser-generator": "^0.4.1-alpha.2",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.4",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

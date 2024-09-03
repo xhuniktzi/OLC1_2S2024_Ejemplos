@@ -49,6 +49,4 @@ def convert_prefix_to_infix(expression: str):
 
 if __name__ == '__main__':
     # Ejemplo de uso
-    # convert_prefix_to_infix("U U & A B C D")
-    # convert_prefix_to_infix("U - A B - B A")
-    convert_prefix_to_infix("& ^A ^B")
+    convert_prefix_to_infix("^ U A U B C")
