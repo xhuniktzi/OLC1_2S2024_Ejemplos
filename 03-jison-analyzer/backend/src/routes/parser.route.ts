@@ -1,5 +1,5 @@
 import { Router } from "express";
-import parser from "../controllers/parser.controller";
+import parser from "../controllers/parser.controller.js";
 
 const router = Router();
 

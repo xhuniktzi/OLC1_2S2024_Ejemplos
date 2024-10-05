@@ -1,8 +1,12 @@
 import { Request, Response } from "express";
-import { TsJisonExampleParser } from "../analyzers/ts-jison-example";
+import { TsJisonExampleParser } from "../analyzers/ts-jison-example.js";
+import Statement from "../analyzers/Statements/Statement.js";
+import Context from "../analyzers/Context/Context.js";
+import RuntimeError from "../analyzers/Exceptions/Runtime.js";
 
 const parser = (req: Request, res: Response) => {
-    const text = `
+    
+    const input = `
     echo 1 + 1 - 2;
     echo 3 + 1 == 4;
     echo -3 + 2;
@@ -22,14 +26,28 @@ const parser = (req: Request, res: Response) => {
     echo foo;
     `;
 
-    const jisonParser = new TsJisonExampleParser();
-    
-    jisonParser.parseError = (_err: string, hash) => {
-        const msg = "No se esperaba el token: " + hash.token + " Se esperaba: " + hash.expected;
-        console.log(msg);
-        res.status(400).send(msg);
+const globalCtx = new Context();
+try {
+    const { errors, ast }: { errors: SyntaxError[]; ast: Statement[] } =
+        new TsJisonExampleParser().parse(input);
+    if (errors.length !== 0) {
+        for (const err of errors) {
+            console.error(err.message);
+        }
+    } else {
+        for (const stmt of ast) {
+            stmt.interpret(globalCtx);
+        }
     }
-    jisonParser.parse(text);
+} catch (err) {
+    if (err instanceof RuntimeError) {
+        console.error(err.message);
+    } else {
+        console.log(err);
+    }
+}
+
+
     res.status(200).send()
 };
 
