@@ -2,6 +2,7 @@ import { TokenLocation } from '@ts-jison/common';
 import Statement from './Statement.js';
 import Expression from '../Expressions/Expression.js';
 import Context from '../Context/Context.js';
+import Global from '../Context/Global.js';
 
 export default class EchoStatement implements Statement {
     private expr: Expression;
@@ -14,6 +15,6 @@ export default class EchoStatement implements Statement {
 
     interpret(ctx: Context) {
         const expr = this.expr.interpret(ctx);
-        console.log(expr);
+        Global.console += expr + '\n';
     }
 }

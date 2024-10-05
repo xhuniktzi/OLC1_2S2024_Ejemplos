@@ -5,6 +5,7 @@ import wrapInSym from './WrapInSym.js';
 
 export default class Context {
     symbols: Map<string, Sym>;
+    console: string;
     prev: Context;
 
     constructor() {
