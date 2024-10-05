@@ -3,6 +3,6 @@ import parser from "../controllers/parser.controller";
 
 const router = Router();
 
-router.post("/parse", parser);
+router.get("/parse", parser);
 
 export default router;
