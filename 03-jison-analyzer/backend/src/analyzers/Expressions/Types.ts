@@ -1,1 +1,1 @@
-export type Type = 'INT' | 'STRING' | 'NULL';
+export type Type = 'INT' | 'STRING' | 'BOOL' | 'NULL';

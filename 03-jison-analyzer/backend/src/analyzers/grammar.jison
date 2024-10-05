@@ -10,16 +10,20 @@
 \s+               /* skip whitespace */
 [0-9]+            return 'INT_LITERAL'
 (\"[^"]*\")       return 'STRING_LITERAL'
+True|False        return 'BOOL_LITERAL'
 ";"               return ';'
 ":"               return ':'
 "-"               return '-'
 "+"               return '+'
 "=="              return '=='
+">"               return '>'
 "="               return '='
 "("               return '('
 ")"               return ')'
 "{"               return '{'
 "}"               return '}'
+"if"              return 'IF'
+"function"        return 'FUNC'
 "echo"            return 'ECHO'
 "let"             return 'LET'
 "int"             return 'INT'
@@ -44,11 +48,16 @@
   import VarAssignmentStmt from './Statements/VarAssignment.js'
   import VarLookUpExpr from './Expressions/VarLookUp.js'
   import BlockStmt from './Statements/Block.js'
+  import IfStmt from './Statements/If.js'
+  import FunctionDefine from './Statements/FuncDeclaration.js'
+  import CallFunction from './Statements/CallFunction.js';
+  import ArgumentContainer from './Context/ArgumentContainer.js';
+  
   const errors = []
 %}
 
 
-%left '=='
+%left '==' '>'
 %left '+' '-'
 %right UMINUS
 
@@ -82,6 +91,9 @@ statement
   | var_declaration
   | var_assignment
   | block
+  | conditional
+  | declare_func
+  | call_func
 ;
 
 block
@@ -111,6 +123,42 @@ expressions
   {$$ = [$1]}
 ;
 
+conditional : IF '(' expression ')'  '{' statements '}'
+{ $$ = new IfStmt($3, $6, @1)}
+;
+
+list_params: list_params IDENTIFIER
+{ $1.push($2)
+  $$ = $1
+}
+| IDENTIFIER
+{ $$ = [$1]}
+;
+
+declare_func: FUNC IDENTIFIER '(' list_params ')' '{' statements '}'
+{$$ = new FunctionDefine($2, $4, $7, @1)}
+| FUNC IDENTIFIER '(' ')' '{' statements '}'
+;
+
+argument: IDENTIFIER '=' expression
+{ $$ = new ArgumentContainer($1, $3)}
+;
+
+list_args: list_args argument
+{
+  $1.push($2)
+  $$ = $1
+}
+| argument
+{$$ = [$1]}
+;
+
+call_func: IDENTIFIER '(' list_args ')'
+{$$ = new CallFunction($1, $3, @1)}
+| IDENTIFIER '('  ')'
+;
+
+
 expression
   : arithmetic
   | relational
@@ -137,6 +185,8 @@ arithmetic
 relational
   : expression '==' expression
   { $$ = new BinaryExpr($1, $2, $3, @1) }
+  | expression '>' expression
+  { $$ = new BinaryExpr($1, $2, $3, @1)}
 ;
 
 literal
@@ -144,6 +194,8 @@ literal
   { $$ = new LiteralExpr($1, 'INT', @1) }
   | STRING_LITERAL
   { $$ = new LiteralExpr($1, 'STRING', @1) }
+  | BOOL_LITERAL
+  { $$ = new LiteralExpr($1, 'BOOL', @1) }
   | NULL
   { $$ = new LiteralExpr($1, 'NULL', @1) }
 ;

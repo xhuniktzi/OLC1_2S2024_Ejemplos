@@ -15,23 +15,28 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
   import VarAssignmentStmt from './Statements/VarAssignment.js'
   import VarLookUpExpr from './Expressions/VarLookUp.js'
   import BlockStmt from './Statements/Block.js'
+  import IfStmt from './Statements/If.js'
+  import FunctionDefine from './Statements/FuncDeclaration.js'
+  import CallFunction from './Statements/CallFunction.js';
+  import ArgumentContainer from './Context/ArgumentContainer.js';
+  
   const errors = []
 
 export class TsJisonExampleParser extends JisonParser implements JisonParserApi {
     $?: any;
-    symbols_: SymbolsType = {"error":2,"start":3,"statements":4,"EOF":5,"statement":6,";":7,"ECHO":8,"expression":9,"var_declaration":10,"var_assignment":11,"block":12,"{":13,"}":14,"LET":15,"IDENTIFIER":16,":":17,"type":18,"=":19,"expressions":20,"arithmetic":21,"relational":22,"(":23,")":24,"-":25,"literal":26,"+":27,"==":28,"INT_LITERAL":29,"STRING_LITERAL":30,"NULL":31,"INT":32,"STRING":33,"$accept":0,"$end":1};
-    terminals_: TerminalsType = {2:"error",5:"EOF",7:";",8:"ECHO",13:"{",14:"}",15:"LET",16:"IDENTIFIER",17:":",19:"=",23:"(",24:")",25:"-",27:"+",28:"==",29:"INT_LITERAL",30:"STRING_LITERAL",31:"NULL",32:"INT",33:"STRING"};
-    productions_: ProductionsType = [0,[3,2],[4,3],[4,2],[4,2],[6,2],[6,1],[6,1],[6,1],[12,3],[10,6],[10,4],[11,3],[20,2],[20,1],[9,1],[9,1],[9,3],[9,3],[9,2],[9,1],[9,1],[21,3],[21,3],[22,3],[26,1],[26,1],[26,1],[18,1],[18,1],[18,1]];
+    symbols_: SymbolsType = {"error":2,"start":3,"statements":4,"EOF":5,"statement":6,";":7,"ECHO":8,"expression":9,"var_declaration":10,"var_assignment":11,"block":12,"conditional":13,"declare_func":14,"call_func":15,"{":16,"}":17,"LET":18,"IDENTIFIER":19,":":20,"type":21,"=":22,"expressions":23,"IF":24,"(":25,")":26,"list_params":27,"FUNC":28,"argument":29,"list_args":30,"arithmetic":31,"relational":32,"-":33,"literal":34,"+":35,"==":36,">":37,"INT_LITERAL":38,"STRING_LITERAL":39,"BOOL_LITERAL":40,"NULL":41,"INT":42,"STRING":43,"$accept":0,"$end":1};
+    terminals_: TerminalsType = {2:"error",5:"EOF",7:";",8:"ECHO",16:"{",17:"}",18:"LET",19:"IDENTIFIER",20:":",22:"=",24:"IF",25:"(",26:")",28:"FUNC",33:"-",35:"+",36:"==",37:">",38:"INT_LITERAL",39:"STRING_LITERAL",40:"BOOL_LITERAL",41:"NULL",42:"INT",43:"STRING"};
+    productions_: ProductionsType = [0,[3,2],[4,3],[4,2],[4,2],[6,2],[6,1],[6,1],[6,1],[6,1],[6,1],[6,1],[12,3],[10,6],[10,4],[11,3],[23,2],[23,1],[13,7],[27,2],[27,1],[14,8],[14,7],[29,3],[30,2],[30,1],[15,4],[15,3],[9,1],[9,1],[9,3],[9,3],[9,2],[9,1],[9,1],[31,3],[31,3],[32,3],[32,3],[34,1],[34,1],[34,1],[34,1],[21,1],[21,1],[21,1]];
     table: Array<StateType>;
-    defaultActions: {[key:number]: any} = {6:[2,6],7:[2,7],8:[2,8],12:[2,1],38:[2,9]};
+    defaultActions: {[key:number]: any} = {6:[2,6],7:[2,7],8:[2,8],9:[2,9],10:[2,10],11:[2,11],17:[2,1],49:[2,27],52:[2,12],65:[2,26],82:[2,18],84:[2,22],85:[2,21]};
 
     constructor (yy = {}, lexer = new TsJisonExampleLexer(yy)) {
       super(yy, lexer);
 
       // shorten static method to just `o` for terse STATE_TABLE
-      const $V0=[1,4],$V1=[1,5],$V2=[1,11],$V3=[1,9],$V4=[1,10],$V5=[1,22],$V6=[1,19],$V7=[1,20],$V8=[1,23],$V9=[1,24],$Va=[1,25],$Vb=[5,8,13,14,15,16],$Vc=[1,31],$Vd=[1,30],$Ve=[1,32],$Vf=[7,24,25,27,28],$Vg=[7,19];
+      const $V0=[1,4],$V1=[1,5],$V2=[1,14],$V3=[1,12],$V4=[1,13],$V5=[1,15],$V6=[1,16],$V7=[1,27],$V8=[1,24],$V9=[1,25],$Va=[1,28],$Vb=[1,29],$Vc=[1,30],$Vd=[1,31],$Ve=[5,8,16,17,18,19,24,28],$Vf=[1,40],$Vg=[1,39],$Vh=[1,41],$Vi=[1,42],$Vj=[7,19,26,33,35,36,37],$Vk=[1,51],$Vl=[19,26],$Vm=[7,19,26,36,37],$Vn=[7,22];
       const o = JisonParser.expandParseTable;
-      this.table = [{2:$V0,3:1,4:2,6:3,8:$V1,10:6,11:7,12:8,13:$V2,15:$V3,16:$V4},{1:[3]},{5:[1,12],6:13,8:$V1,10:6,11:7,12:8,13:$V2,15:$V3,16:$V4},{7:[1,14]},{7:[1,15]},{9:16,16:$V5,21:17,22:18,23:$V6,25:$V7,26:21,29:$V8,30:$V9,31:$Va},{7:[2,6]},{7:[2,7]},{7:[2,8]},{16:[1,26]},{19:[1,27]},{2:$V0,4:28,6:3,8:$V1,10:6,11:7,12:8,13:$V2,15:$V3,16:$V4},{1:[2,1]},{7:[1,29]},o($Vb,[2,3]),o($Vb,[2,4]),{7:[2,5],25:$Vc,27:$Vd,28:$Ve},o($Vf,[2,15]),o($Vf,[2,16]),{2:[1,34],9:33,16:$V5,21:17,22:18,23:$V6,25:$V7,26:21,29:$V8,30:$V9,31:$Va},{9:35,16:$V5,21:17,22:18,23:$V6,25:$V7,26:21,29:$V8,30:$V9,31:$Va},o($Vf,[2,20]),o($Vf,[2,21]),o($Vf,[2,25]),o($Vf,[2,26]),o($Vf,[2,27]),{17:[1,36]},{9:37,16:$V5,21:17,22:18,23:$V6,25:$V7,26:21,29:$V8,30:$V9,31:$Va},{6:13,8:$V1,10:6,11:7,12:8,13:$V2,14:[1,38],15:$V3,16:$V4},o($Vb,[2,2]),{9:39,16:$V5,21:17,22:18,23:$V6,25:$V7,26:21,29:$V8,30:$V9,31:$Va},{9:40,16:$V5,21:17,22:18,23:$V6,25:$V7,26:21,29:$V8,30:$V9,31:$Va},{9:41,16:$V5,21:17,22:18,23:$V6,25:$V7,26:21,29:$V8,30:$V9,31:$Va},{24:[1,42],25:$Vc,27:$Vd,28:$Ve},{24:[1,43]},o($Vf,[2,19]),{18:44,31:[1,47],32:[1,45],33:[1,46]},{7:[2,12],25:$Vc,27:$Vd,28:$Ve},{7:[2,9]},o($Vf,[2,22]),o($Vf,[2,23]),o([7,24,28],[2,24],{25:$Vc,27:$Vd}),o($Vf,[2,17]),o($Vf,[2,18]),{7:[2,11],19:[1,48]},o($Vg,[2,28]),o($Vg,[2,29]),o($Vg,[2,30]),{9:49,16:$V5,21:17,22:18,23:$V6,25:$V7,26:21,29:$V8,30:$V9,31:$Va},{7:[2,10],25:$Vc,27:$Vd,28:$Ve}];
+      this.table = [{2:$V0,3:1,4:2,6:3,8:$V1,10:6,11:7,12:8,13:9,14:10,15:11,16:$V2,18:$V3,19:$V4,24:$V5,28:$V6},{1:[3]},{5:[1,17],6:18,8:$V1,10:6,11:7,12:8,13:9,14:10,15:11,16:$V2,18:$V3,19:$V4,24:$V5,28:$V6},{7:[1,19]},{7:[1,20]},{9:21,19:$V7,25:$V8,31:22,32:23,33:$V9,34:26,38:$Va,39:$Vb,40:$Vc,41:$Vd},{7:[2,6]},{7:[2,7]},{7:[2,8]},{7:[2,9]},{7:[2,10]},{7:[2,11]},{19:[1,32]},{22:[1,33],25:[1,34]},{2:$V0,4:35,6:3,8:$V1,10:6,11:7,12:8,13:9,14:10,15:11,16:$V2,18:$V3,19:$V4,24:$V5,28:$V6},{25:[1,36]},{19:[1,37]},{1:[2,1]},{7:[1,38]},o($Ve,[2,3]),o($Ve,[2,4]),{7:[2,5],33:$Vf,35:$Vg,36:$Vh,37:$Vi},o($Vj,[2,28]),o($Vj,[2,29]),{2:[1,44],9:43,19:$V7,25:$V8,31:22,32:23,33:$V9,34:26,38:$Va,39:$Vb,40:$Vc,41:$Vd},{9:45,19:$V7,25:$V8,31:22,32:23,33:$V9,34:26,38:$Va,39:$Vb,40:$Vc,41:$Vd},o($Vj,[2,33]),o($Vj,[2,34]),o($Vj,[2,39]),o($Vj,[2,40]),o($Vj,[2,41]),o($Vj,[2,42]),{20:[1,46]},{9:47,19:$V7,25:$V8,31:22,32:23,33:$V9,34:26,38:$Va,39:$Vb,40:$Vc,41:$Vd},{19:$Vk,26:[1,49],29:50,30:48},{6:18,8:$V1,10:6,11:7,12:8,13:9,14:10,15:11,16:$V2,17:[1,52],18:$V3,19:$V4,24:$V5,28:$V6},{9:53,19:$V7,25:$V8,31:22,32:23,33:$V9,34:26,38:$Va,39:$Vb,40:$Vc,41:$Vd},{25:[1,54]},o($Ve,[2,2]),{9:55,19:$V7,25:$V8,31:22,32:23,33:$V9,34:26,38:$Va,39:$Vb,40:$Vc,41:$Vd},{9:56,19:$V7,25:$V8,31:22,32:23,33:$V9,34:26,38:$Va,39:$Vb,40:$Vc,41:$Vd},{9:57,19:$V7,25:$V8,31:22,32:23,33:$V9,34:26,38:$Va,39:$Vb,40:$Vc,41:$Vd},{9:58,19:$V7,25:$V8,31:22,32:23,33:$V9,34:26,38:$Va,39:$Vb,40:$Vc,41:$Vd},{26:[1,59],33:$Vf,35:$Vg,36:$Vh,37:$Vi},{26:[1,60]},o($Vj,[2,32]),{21:61,41:[1,64],42:[1,62],43:[1,63]},{7:[2,15],33:$Vf,35:$Vg,36:$Vh,37:$Vi},{19:$Vk,26:[1,65],29:66},{7:[2,27]},o($Vl,[2,25]),{22:[1,67]},{7:[2,12]},{26:[1,68],33:$Vf,35:$Vg,36:$Vh,37:$Vi},{19:[1,71],26:[1,70],27:69},o($Vj,[2,35]),o($Vj,[2,36]),o($Vm,[2,37],{33:$Vf,35:$Vg}),o($Vm,[2,38],{33:$Vf,35:$Vg}),o($Vj,[2,30]),o($Vj,[2,31]),{7:[2,14],22:[1,72]},o($Vn,[2,43]),o($Vn,[2,44]),o($Vn,[2,45]),{7:[2,26]},o($Vl,[2,24]),{9:73,19:$V7,25:$V8,31:22,32:23,33:$V9,34:26,38:$Va,39:$Vb,40:$Vc,41:$Vd},{16:[1,74]},{19:[1,76],26:[1,75]},{16:[1,77]},o($Vl,[2,20]),{9:78,19:$V7,25:$V8,31:22,32:23,33:$V9,34:26,38:$Va,39:$Vb,40:$Vc,41:$Vd},o($Vl,[2,23],{33:$Vf,35:$Vg,36:$Vh,37:$Vi}),{2:$V0,4:79,6:3,8:$V1,10:6,11:7,12:8,13:9,14:10,15:11,16:$V2,18:$V3,19:$V4,24:$V5,28:$V6},{16:[1,80]},o($Vl,[2,19]),{2:$V0,4:81,6:3,8:$V1,10:6,11:7,12:8,13:9,14:10,15:11,16:$V2,18:$V3,19:$V4,24:$V5,28:$V6},{7:[2,13],33:$Vf,35:$Vg,36:$Vh,37:$Vi},{6:18,8:$V1,10:6,11:7,12:8,13:9,14:10,15:11,16:$V2,17:[1,82],18:$V3,19:$V4,24:$V5,28:$V6},{2:$V0,4:83,6:3,8:$V1,10:6,11:7,12:8,13:9,14:10,15:11,16:$V2,18:$V3,19:$V4,24:$V5,28:$V6},{6:18,8:$V1,10:6,11:7,12:8,13:9,14:10,15:11,16:$V2,17:[1,84],18:$V3,19:$V4,24:$V5,28:$V6},{7:[2,18]},{6:18,8:$V1,10:6,11:7,12:8,13:9,14:10,15:11,16:$V2,17:[1,85],18:$V3,19:$V4,24:$V5,28:$V6},{7:[2,22]},{7:[2,21]}];
     }
 
     performAction (yytext:string, yyleng:number, yylineno:number, yy:any, yystate:number /* action[1] */, $$:any /* vstack */, _$:any /* lstack */): any {
@@ -59,59 +64,92 @@ break;
 case 5:
  this.$ = new EchoStmt($$[$0], _$[$0-1]) 
 break;
-case 9:
+case 12:
  this.$ = new BlockStmt($$[$0-1], _$[$0-2])
 break;
-case 10:
+case 13:
  this.$ = new VarDeclarationStmt($$[$0-4], $$[$0-2], $$[$0], _$[$0-4]) 
 break;
-case 11:
+case 14:
  this.$ = new VarDeclarationStmt($$[$0-2], $$[$0], null, _$[$0-2]) 
 break;
-case 12:
+case 15:
  this.$ = new VarAssignmentStmt($$[$0-2], $$[$0], _$[$0-2]) 
 break;
-case 13:
+case 16:
 
     $$[$0-1].push($$[$0])
     this.$ = $$[$0-1]
   
 break;
-case 14:
+case 17: case 25:
 this.$ = [$$[$0]]
 break;
-case 17:
+case 18:
+ this.$ = new IfStmt($$[$0-4], $$[$0-1], _$[$0-6])
+break;
+case 19:
+ $$[$0-1].push($$[$0])
+  this.$ = $$[$0-1]
+
+break;
+case 20:
+ this.$ = [$$[$0]]
+break;
+case 21:
+this.$ = new FunctionDefine($$[$0-6], $$[$0-4], $$[$0-1], _$[$0-7])
+break;
+case 23:
+ this.$ = new ArgumentContainer($$[$0-2], $$[$0])
+break;
+case 24:
+
+  $$[$0-1].push($$[$0])
+  this.$ = $$[$0-1]
+
+break;
+case 26:
+this.$ = new CallFunction($$[$0-3], $$[$0-1], _$[$0-3])
+break;
+case 30:
  this.$ = $$[$0-1] 
 break;
-case 18:
+case 31:
 
     errors.push(new SyntaxError(_$[$0-1], _$[$0-1]))
   
 break;
-case 19:
+case 32:
  this.$ = new UnaryExpr($$[$0-1], $$[$0], _$[$0-1]) 
 break;
-case 21:
+case 34:
  this.$ = new VarLookUpExpr($$[$0], _$[$0]) 
 break;
-case 22: case 23:
+case 35: case 36:
 this.$ = new BinaryExpr($$[$0-2], $$[$0-1], $$[$0], _$[$0-1]) 
 break;
-case 24:
+case 37:
  this.$ = new BinaryExpr($$[$0-2], $$[$0-1], $$[$0], _$[$0-2]) 
 break;
-case 25:
+case 38:
+ this.$ = new BinaryExpr($$[$0-2], $$[$0-1], $$[$0], _$[$0-2])
+break;
+case 39:
  this.$ = new LiteralExpr($$[$0], 'INT', _$[$0]) 
 break;
-case 26:
+case 40:
  this.$ = new LiteralExpr($$[$0], 'STRING', _$[$0]) 
 break;
-case 27:
+case 41:
+ this.$ = new LiteralExpr($$[$0], 'BOOL', _$[$0]) 
+break;
+case 42:
  this.$ = new LiteralExpr($$[$0], 'NULL', _$[$0]) 
 break;
         }
     }
 }
+
 
 
 /* generated by @ts-jison/lexer-generator 0.4.1-alpha.2 */
@@ -127,16 +165,20 @@ export class TsJisonExampleLexer extends JisonLexer implements JisonLexerApi {
         /^(?:\s+)/,
         /^(?:[0-9]+)/,
         /^(?:"[^"]*")/,
+        /^(?:True|False)/,
         /^(?:;)/,
         /^(?::)/,
         /^(?:-)/,
         /^(?:\+)/,
         /^(?:==)/,
+        /^(?:>)/,
         /^(?:=)/,
         /^(?:\()/,
         /^(?:\))/,
         /^(?:\{)/,
         /^(?:\})/,
+        /^(?:if\b)/,
+        /^(?:function\b)/,
         /^(?:echo\b)/,
         /^(?:let\b)/,
         /^(?:int\b)/,
@@ -146,51 +188,59 @@ export class TsJisonExampleLexer extends JisonLexer implements JisonLexerApi {
         /^(?:$)/,
         /^(?:.)/
     ];
-    conditions: any = {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],"inclusive":true}}
+    conditions: any = {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24],"inclusive":true}}
     performAction (yy:any,yy_:any,$avoiding_name_collisions:any,YY_START:any): any {
           var YYSTATE=YY_START;
         switch($avoiding_name_collisions) {
     case 0:/* skip whitespace */
       break;
-    case 1:return 29
+    case 1:return 38
       break;
-    case 2:return 30
+    case 2:return 39
       break;
-    case 3:return 7
+    case 3:return 40
       break;
-    case 4:return 17
+    case 4:return 7
       break;
-    case 5:return 25
+    case 5:return 20
       break;
-    case 6:return 27
+    case 6:return 33
       break;
-    case 7:return 28
+    case 7:return 35
       break;
-    case 8:return 19
+    case 8:return 36
       break;
-    case 9:return 23
+    case 9:return 37
       break;
-    case 10:return 24
+    case 10:return 22
       break;
-    case 11:return 13
+    case 11:return 25
       break;
-    case 12:return 14
+    case 12:return 26
       break;
-    case 13:return 8
+    case 13:return 16
       break;
-    case 14:return 15
+    case 14:return 17
       break;
-    case 15:return 32
+    case 15:return 24
       break;
-    case 16:return 33
+    case 16:return 28
       break;
-    case 17:return 31
+    case 17:return 8
       break;
-    case 18:return 16
+    case 18:return 18
       break;
-    case 19:return 5
+    case 19:return 42
       break;
-    case 20:
+    case 20:return 43
+      break;
+    case 21:return 41
+      break;
+    case 22:return 19
+      break;
+    case 23:return 5
+      break;
+    case 24:
   throw new LexicalError(yy_.yytext, yy_.yylineno + 1, yy_.yylloc.first_column + 1);
 
       break;

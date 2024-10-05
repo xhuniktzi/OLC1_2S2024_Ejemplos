@@ -6,10 +6,13 @@ import RuntimeError from "../analyzers/Exceptions/Runtime.js";
 import Global from "../analyzers/Context/Global.js";
 
 const parser = (req: Request, res: Response) => {
+    Global.console = ''
+    Global.list_functions = []
     const { input } = req.body;
 
     const globalCtx = new Context();
     try {
+        
         const { errors, ast }: { errors: SyntaxError[]; ast: Statement[] } =
             new TsJisonExampleParser().parse(input);
         if (errors.length !== 0) {
@@ -32,7 +35,7 @@ const parser = (req: Request, res: Response) => {
         }
     }
 
-
+    
     res.status(200).send({
         "output": Global.console
     })

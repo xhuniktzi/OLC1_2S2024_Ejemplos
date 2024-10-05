@@ -20,6 +20,8 @@ export default class LiteralExpr implements Expression {
                 return Number(this.literal);
             case 'STRING':
                 return this.literal.replaceAll('"', '');
+            case 'BOOL':
+                return this.literal == 'True' ? true : this.literal == 'False' ? false : null;
             case 'NULL':
                 return null;
         }

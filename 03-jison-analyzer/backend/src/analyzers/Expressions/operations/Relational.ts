@@ -1,7 +1,7 @@
 import { TokenLocation } from '@ts-jison/common';
 import RuntimeError from '../../Exceptions/Runtime.js';
 
-export default function getComparison(
+export default function getRelational(
     left: any,
     operator: string,
     right: any,
@@ -16,6 +16,13 @@ export default function getComparison(
                     return left === right;
                 }
             }
+        case '>':
+            if (leftType === 'number' || leftType === 'object') {
+                if (leftType === 'number' || leftType === 'object') {
+                    return left > right;
+                }
+            }
+
     }
     throw new RuntimeError(
         `The ${operator} operator is undefined for types ${leftType} and ${rightType}`,
