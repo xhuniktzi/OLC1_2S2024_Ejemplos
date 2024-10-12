@@ -11,6 +11,7 @@
 [0-9]+            return 'INT_LITERAL'
 (\"[^"]*\")       return 'STRING_LITERAL'
 True|False        return 'BOOL_LITERAL'
+","               return ','
 ";"               return ';'
 ":"               return ':'
 "-"               return '-'
@@ -29,6 +30,10 @@ True|False        return 'BOOL_LITERAL'
 "int"             return 'INT'
 "string"          return 'STRING'
 "null"            return 'NULL'
+"return"          return 'RET'
+"break"          return 'BREAK'
+"continue"          return 'CONTINUE'
+"loop"            return 'LOOP'
 [a-z][a-z0-9]*    return 'IDENTIFIER'
 <<EOF>>           return 'EOF'
 . {
@@ -44,14 +49,20 @@ True|False        return 'BOOL_LITERAL'
   import LiteralExpr from './Expressions/Literal.js'
   import UnaryExpr from './Expressions/Unary.js'
   import EchoStmt from './Statements/Echo.js'
+  import Return from './Statements/Return.js'
   import VarDeclarationStmt from './Statements/VarDeclaration.js'
   import VarAssignmentStmt from './Statements/VarAssignment.js'
   import VarLookUpExpr from './Expressions/VarLookUp.js'
   import BlockStmt from './Statements/Block.js'
   import IfStmt from './Statements/If.js'
   import FunctionDefine from './Statements/FuncDeclaration.js'
-  import CallFunction from './Statements/CallFunction.js';
+  import Loop from './Statements/Loop.js'
+  import CallFunction from './Expressions/CallFunction.js';
   import ArgumentContainer from './Context/ArgumentContainer.js';
+  import ParamContainer from './Context/ParamContainer.js';
+  import Break from './Statements/Break.js';
+import Continue from './Statements/Continue.js';
+
   
   const errors = []
 %}
@@ -93,13 +104,23 @@ statement
   | block
   | conditional
   | declare_func
-  | call_func
+  | return
+  | loop
+  | BREAK { $$ = new Break(@1); }
+  | CONTINUE { $$=  new Continue(@1); }
+  
 ;
 
 block
   : '{' statements '}'
   { $$ = new BlockStmt($2, @1)}
 ;
+
+loop
+  : LOOP '{' statements '}'
+  { $$ = new Loop($3, @1)}
+;
+
 
 var_declaration
   : LET IDENTIFIER ':' type '=' expression
@@ -123,15 +144,22 @@ expressions
   {$$ = [$1]}
 ;
 
+return: RET expression { $$ = new Return($2, @1)};
+
 conditional : IF '(' expression ')'  '{' statements '}'
 { $$ = new IfStmt($3, $6, @1)}
 ;
 
-list_params: list_params IDENTIFIER
-{ $1.push($2)
+parameter: IDENTIFIER ':' type
+{ $$ = new ParamContainer($1, $3);}
+;
+
+
+list_params: list_params ',' parameter
+{ $1.push($3)
   $$ = $1
 }
-| IDENTIFIER
+| parameter
 { $$ = [$1]}
 ;
 
@@ -144,9 +172,9 @@ argument: IDENTIFIER '=' expression
 { $$ = new ArgumentContainer($1, $3)}
 ;
 
-list_args: list_args argument
+list_args: list_args ',' argument 
 {
-  $1.push($2)
+  $1.push($3)
   $$ = $1
 }
 | argument
@@ -162,6 +190,7 @@ call_func: IDENTIFIER '(' list_args ')'
 expression
   : arithmetic
   | relational
+  | call_func
   | '(' expression ')'
   { $$ = $2 }
   | '(' error ')'

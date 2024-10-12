@@ -1,0 +1,10 @@
+let x: int = 0;
+loop {
+ echo "Hola Mundo";
+ if (x == 3) {
+   break;
+ };
+x = x + 1;
+continue;
+echo "Hola 2";
+};
