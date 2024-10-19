@@ -34,6 +34,7 @@ True|False        return 'BOOL_LITERAL'
 "break"          return 'BREAK'
 "continue"          return 'CONTINUE'
 "loop"            return 'LOOP'
+"ejecutar"      return 'EXECUTE'
 [a-z][a-z0-9]*    return 'IDENTIFIER'
 <<EOF>>           return 'EOF'
 . {
@@ -61,7 +62,8 @@ True|False        return 'BOOL_LITERAL'
   import ArgumentContainer from './Context/ArgumentContainer.js';
   import ParamContainer from './Context/ParamContainer.js';
   import Break from './Statements/Break.js';
-import Continue from './Statements/Continue.js';
+  import Execute from './Statements/Execute.js';
+  import Continue from './Statements/Continue.js';
 
   
   const errors = []
@@ -106,9 +108,13 @@ statement
   | declare_func
   | return
   | loop
+  | execute
   | BREAK { $$ = new Break(@1); }
   | CONTINUE { $$=  new Continue(@1); }
-  
+;
+
+execute: EXECUTE IDENTIFIER '(' list_args ')' {$$ = new Execute($2, $4, @1);}
+| IDENTIFIER '('  ')' {$$ = new Execute($2, null, @1);}
 ;
 
 block

@@ -2,6 +2,7 @@ import Sym from './Symbol.js';
 import { TokenLocation } from '@ts-jison/common';
 import RuntimeError from '../Exceptions/Runtime.js';
 import wrapInSym from './WrapInSym.js';
+import Global from './Global.js';
 
 export default class Context {
     symbols: Map<string, Sym>;
