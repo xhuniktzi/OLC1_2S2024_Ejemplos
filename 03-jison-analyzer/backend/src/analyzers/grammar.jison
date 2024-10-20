@@ -24,6 +24,7 @@ True|False        return 'BOOL_LITERAL'
 "{"               return '{'
 "}"               return '}'
 "if"              return 'IF'
+"else"          return 'ELSE'
 "function"        return 'FUNC'
 "echo"            return 'ECHO'
 "let"             return 'LET'
@@ -35,6 +36,9 @@ True|False        return 'BOOL_LITERAL'
 "continue"          return 'CONTINUE'
 "loop"            return 'LOOP'
 "ejecutar"      return 'EXECUTE'
+"switch" return 'SWITCH'
+"case" return 'CASE'
+"default" return 'DEFAULT'
 [a-z][a-z0-9]*    return 'IDENTIFIER'
 <<EOF>>           return 'EOF'
 . {
@@ -51,6 +55,8 @@ True|False        return 'BOOL_LITERAL'
   import UnaryExpr from './Expressions/Unary.js'
   import EchoStmt from './Statements/Echo.js'
   import Return from './Statements/Return.js'
+  import Switch from './Statements/Switch.js'
+  import CaseStmt from './Statements/Case.js'
   import VarDeclarationStmt from './Statements/VarDeclaration.js'
   import VarAssignmentStmt from './Statements/VarAssignment.js'
   import VarLookUpExpr from './Expressions/VarLookUp.js'
@@ -109,6 +115,7 @@ statement
   | return
   | loop
   | execute
+  | selector
   | BREAK { $$ = new Break(@1); }
   | CONTINUE { $$=  new Continue(@1); }
 ;
@@ -127,6 +134,20 @@ loop
   { $$ = new Loop($3, @1)}
 ;
 
+selector: SWITCH '(' expression ')'  '{' cases '}'
+{ $$ = new Switch($3, $6, null, @1); }
+| SWITCH '(' expression ')'  '{' cases '}' DEFAULT '{' statements '}'
+{ $$ = new Switch($3, $6, $10, @1); }
+;
+
+cases: cases case_stmt {$1.push($2)
+    $$ = $1}
+| case_stmt {$$ = [$1]}
+;
+
+case_stmt: CASE '(' expression ')'  '{' statements '}'
+{ $$ = new CaseStmt($3, $6, @1); }
+;
 
 var_declaration
   : LET IDENTIFIER ':' type '=' expression
@@ -153,7 +174,9 @@ expressions
 return: RET expression { $$ = new Return($2, @1)};
 
 conditional : IF '(' expression ')'  '{' statements '}'
-{ $$ = new IfStmt($3, $6, @1)}
+{ $$ = new IfStmt($3, $6, null, @1)}
+| IF '(' expression ')'  '{' statements '}' ELSE '{' statements '}'
+{ $$ = new IfStmt($3, $6, $10, @1)}
 ;
 
 parameter: IDENTIFIER ':' type
